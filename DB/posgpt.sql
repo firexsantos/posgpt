@@ -33,8 +33,8 @@ CREATE TABLE `barang` (
 /*Data for the table `barang` */
 
 insert  into `barang`(`id_barang`,`kode_barang`,`nm_barang`,`id_barangjns`,`id_barangsat`,`harga_beli`,`harga_jual`,`stok`,`useradd`,`tgladd`) values 
-(1,'111','Sabun Mandi',2,2,10000,14000,30,3,'2023-06-02 20:30:02'),
-(4,'222','Piring Cantik',4,5,6000,8000,54,3,'2023-06-05 10:24:55'),
+(1,'111','Sabun Mandi',2,2,10000,14000,28,3,'2023-06-02 20:30:02'),
+(4,'222','Piring Cantik',4,5,6000,8000,49,3,'2023-06-05 10:24:55'),
 (5,'333','Pena Pilot',5,1,20000,24000,26,3,'2023-06-05 10:25:23');
 
 /*Table structure for table `barangjns` */
@@ -75,6 +75,33 @@ insert  into `barangsat`(`id_barangsat`,`nm_barangsat`) values
 (6,'Ekor'),
 (7,'Biji');
 
+/*Table structure for table `bulan` */
+
+DROP TABLE IF EXISTS `bulan`;
+
+CREATE TABLE `bulan` (
+  `id_bulan` int(11) NOT NULL AUTO_INCREMENT,
+  `no_bulan` char(3) DEFAULT NULL,
+  `nm_bulan` varchar(35) DEFAULT NULL,
+  PRIMARY KEY (`id_bulan`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `bulan` */
+
+insert  into `bulan`(`id_bulan`,`no_bulan`,`nm_bulan`) values 
+(1,'01','Januari'),
+(2,'02','Februari'),
+(3,'03','Maret'),
+(4,'04','April'),
+(5,'05','Mei'),
+(6,'06','Juni'),
+(7,'07','Juli'),
+(8,'08','Agustus'),
+(9,'09','September'),
+(10,'10','Oktober'),
+(11,'11','November'),
+(12,'12','Desember');
+
 /*Table structure for table `transaksi` */
 
 DROP TABLE IF EXISTS `transaksi`;
@@ -93,7 +120,9 @@ CREATE TABLE `transaksi` (
 /*Data for the table `transaksi` */
 
 insert  into `transaksi`(`no_transaksi`,`grand`,`bayar`,`kembali`,`useradd`,`tgladd`,`status`) values 
-('230604.1455.TRANS.00001',102000,110000,8000,3,'2023-06-04 14:55:47','selesai');
+('230604.1455.TRANS.00001',102000,110000,8000,3,'2023-06-04 14:55:47','selesai'),
+('230606.1043.TRANS.00001',368000,400000,32000,3,'2023-06-06 10:43:16','selesai'),
+('230606.1045.TRANS.00001',68000,100000,32000,3,'2023-06-06 10:45:41','selesai');
 
 /*Table structure for table `transaksi_detail` */
 
@@ -107,13 +136,18 @@ CREATE TABLE `transaksi_detail` (
   `qty` int(11) DEFAULT NULL,
   `total` double DEFAULT NULL,
   PRIMARY KEY (`id_detail`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `transaksi_detail` */
 
 insert  into `transaksi_detail`(`id_detail`,`no_transaksi`,`kode_barang`,`harga`,`qty`,`total`) values 
-(1,'230604.1455.TRANS.00001','111',14000,5,70000),
-(3,'230604.1455.TRANS.00001','222',8000,4,32000);
+(1,'230604.1455.TRANS.00001','111',14000,3,42000),
+(3,'230604.1455.TRANS.00001','222',8000,4,32000),
+(8,'230606.1043.TRANS.00001','111',14000,12,168000),
+(9,'230606.1043.TRANS.00001','222',8000,4,32000),
+(10,'230606.1043.TRANS.00001','333',24000,7,168000),
+(11,'230606.1045.TRANS.00001','111',14000,2,28000),
+(12,'230606.1045.TRANS.00001','222',8000,5,40000);
 
 /*Table structure for table `users` */
 
