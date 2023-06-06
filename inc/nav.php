@@ -30,13 +30,13 @@
             <a class="nav-link <?php if($menu == "transaksi"){ echo "active";} ?>" href="dash.php?menu=transaksi">Transaksi</a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            <a class="nav-link dropdown-toggle <?php if($menu == "lap-penjualan"){ echo "active";} ?>" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               Laporan
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Lap. Penjualan</a></li>
-              <li><a class="dropdown-item" href="#">Lap. Stok Barang</a></li>
+              <li><a class="dropdown-item <?php if($menu == "lap-penjualan"){ echo "active";} ?>" href="dash.php?menu=lap-penjualan">Lap. Penjualan</a></li>
+              <li><a class="dropdown-item" href="pdf.php?menu=lap-stok" target="_blank">Lap. Stok Barang</a></li>
             </ul>
           </li>
         </ul>

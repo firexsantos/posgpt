@@ -47,6 +47,11 @@
             $kembali = $_POST['kembali'];
             $simpan = mysqli_query($con, "UPDATE transaksi SET grand = '".$grand."', bayar = '".$bayar."', kembali = '".$kembali."', `status` = 'selesai' WHERE no_transaksi = '".$id."'");
             if($simpan){
+                $sdetail = mysqli_query($con,"SELECT a.*, b.stok FROM transaksi_detail a LEFT JOIN barang b ON a.kode_barang = b.kode_barang WHERE a.no_transaksi = '".$id."'");
+                while($ddetail = mysqli_fetch_array($sdetail)){
+                    $newstok = $ddetail['stok'] - $ddetail['qty'];
+                    mysqli_query($con, "UPDATE barang SET stok = '".$newstok."' WHERE kode_barang = '".$ddetail['kode_barang']."'");
+                }
                 header("Location: dash.php?menu=transaksi");
             }else{
                 echo"<div class='alert alert-danger'>Terjadi kesalahan, data gagal diproses.</div>";

@@ -38,6 +38,8 @@
       include"menu/master/barangjns.php"; 
     }else if($menu == "barangsat"){
       include"menu/master/barangsat.php"; 
+    }else if($menu == "lap-penjualan"){
+      include"menu/formlap/lap_penjualan.php"; 
     }else{
       echo"<div class='alert alert-danger'>Halaman tidak ditemukan...</div>";
     }

@@ -19,6 +19,12 @@
 	if($menu == "kuitansi"){
 		include"laporan/kuitansi.php";
 		$posisi = "A4-P";
+	}else if($menu == "lap-penjualan"){
+		include"laporan/lap_penjualan.php";
+		$posisi = "A4-P";
+	}else if($menu == "lap-stok"){
+		include"laporan/lap_stok.php";
+		$posisi = "A4-P";
 	}
 	
 	else{
