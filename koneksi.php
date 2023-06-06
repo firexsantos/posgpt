@@ -11,7 +11,9 @@
     function identitas($data = ""){
         if(empty($data) || $data == "judul"){
             return "Poin of Sale GPT";
-        }
+        }else if($data == "url"){
+			return "http://localhost/posgpt/";
+		}
     }
 
     $sesixxxx = mysqli_query($con, "SELECT * FROM users WHERE id_user = '".$sesuser."'");

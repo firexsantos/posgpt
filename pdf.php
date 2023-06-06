@@ -1,4 +1,5 @@
 <?php
+	include"koneksi.php";
 	$nama_dokumen = 'PDF' . date("YmdHis");	
 	require_once __DIR__ . '/vendor/autoload.php';
 
@@ -10,22 +11,13 @@
 	//$mpdf->useGraphs = true;
 	$footer = '<table cellpadding=0 cellspacing=0 style="border:none;font-size:10px;" width="100%">
            <tr><td style="margin-right:-5px;border:none;" align="left">
-           <i>Dicetak: ' . date("d/m/Y H:i") . ' melalui '.base_url().'</i></td>
+           <i>Dicetak: ' . date("d/m/Y H:i") . ' melalui '.identitas("url").'</i></td>
            <td style="margin-right:-5px;border:none;" align="right">
            Halaman: {PAGENO} / {nb}</td></tr></table>';
-	$menu	= $this->uri->segment(3);
+	$menu	= trim(@$_GET['menu']);
 	
-	if($menu == "formulir-informasi"){
-		include "laporan/formulir_informasi.php";
-		$posisi = "A4-P";
-	}else if($menu == "formulir-penelitian"){
-		include "laporan/formulir_penelitian.php";
-		$posisi = "A4-P";
-	}else if($menu == "lap-penelitian"){
-		include "laporan/lap_penelitian.php";
-		$posisi = "A4-P";
-	}else if($menu == "lap-informasi"){
-		include "laporan/lap_informasi.php";
+	if($menu == "kuitansi"){
+		include"laporan/kuitansi.php";
 		$posisi = "A4-P";
 	}
 	

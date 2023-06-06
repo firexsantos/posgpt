@@ -17,7 +17,7 @@
             $qty = $_POST['qty'];
             $total = $_POST['total'];
 
-            $scek = mysqli_query($con, "SELECT * FROM transaksi_detail WHERE kode_barang = '".$kode_barang."'");
+            $scek = mysqli_query($con, "SELECT * FROM transaksi_detail WHERE kode_barang = '".$kode_barang."' AND no_transaksi = '".$no_transaksi."'");
             $hcek = mysqli_num_rows($scek);
             if($hcek > 0){
                 $dcek = mysqli_fetch_array($scek);

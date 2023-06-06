@@ -1,4 +1,16 @@
 <div class="container mt-5">
+  <?php
+    if(isset($_POST['hapus'])){
+      $no_transaksi = $_POST['no_transaksi'];
+      $simpan = mysqli_query($con, "DELETE FROM transaksi WHERE no_transaksi = '".$no_transaksi."'");
+      if($simpan){
+          mysqli_query($con, "DELETE FROM transaksi_detail WHERE no_transaksi = '".$no_transaksi."'");
+          header("Location: dash.php?menu=transaksi");
+      }else{
+          echo"<div class='alert alert-danger'>Terjadi kesalahan, data gagal diproses.</div>";
+      }
+    }
+  ?>
   <h1>Transaksi Penjualan</h1>
   <div class="card">
     <div class="card-header">
@@ -22,11 +34,11 @@
           while($ddata = mysqli_fetch_array($sdata)){
             if($ddata['status'] == "blengkap"){
               $tomboaksi = "
-                <a href='dash.php?menu=add-transaksi&id=".$ddata['no_transaksi']."' class='btn btn-primary'>Edit</a>
-                <a href='#' class='btn btn-danger'>Hapus</a>
+                <a href='dash.php?menu=add-transaksi&id=".$ddata['no_transaksi']."' class='btn btn-primary btn-sm'>Edit</a>
+                <a href='#' data-bs-toggle='modal' data-bs-target='#modalHapus' class='btn btn-danger bthapus btn-sm' data-id='".$ddata['no_transaksi']."' data-nama='".$ddata['no_transaksi']."'>Hapus</a>
               ";
             }else{
-              $tomboaksi = "<a href='#' class='btn btn-dark'>Cetak</a>";
+              $tomboaksi = "<a href='pdf.php?menu=kuitansi&id=".$ddata['no_transaksi']."' class='btn btn-dark btn-sm' target='_blank'>Cetak</a>";
             }
             echo"
               <tr>
@@ -49,3 +61,36 @@
     </table>
   </div>
 </div>
+
+
+<div class="modal fade" id="modalHapus" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <input type="hidden" name="no_transaksi" id="no_transaksi_hapus">
+                    <div class="alert alert-danger">Anda yakin akan menghapus data <b id="nama_hapus"></b>? data yang sudah dihapus tidak bisa dikembalikan lagi.</div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-danger" name="hapus">Ya! Hapus Data</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).on('click', '.bthapus', function() {
+      const id 	= $(this).data('id');
+      const nama 	= $(this).data('nama');
+      $('#no_transaksi_hapus').val(id);
+      document.getElementById("nama_hapus").innerHTML = nama;
+      //console.log("data : " + nama);
+    });
+  </script>
