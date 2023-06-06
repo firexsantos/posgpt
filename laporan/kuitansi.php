@@ -1,25 +1,19 @@
-
-<!--
-<link href="<?php echo base_url();?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
--->
-<link href="<?php echo base_url();?>assets/css/mpdf-bootstrap.css" rel="stylesheet" type="text/css">
+<link href="assets/css/mpdf-bootstrap.css" rel="stylesheet" type="text/css">
 	
 <?php
-	$no_transaksi	= antixss(dekrip($this->uri->segment(4)));
+	$no_transaksi	= trim(@$_GET['id']);
 	
-	$strans			= $this->db->query("SELECT a.*, RIGHT(a.tgl_transaksi, 8) AS jam_transaksi, d.`nama` AS nm_admin FROM trans a LEFT JOIN pengguna d ON a.`useradd` = d.`no_register` WHERE a.jenis = 'apotik' AND a.no_transaksi = '".$no_transaksi."'");
-	$htrans				= $strans->num_rows();
+	$strans			= mysqli_query($con, "SELECT a.*, LEFT(a.tgladd, 10) AS tgl_transaksi, MID(a.tgladd, 12, 5) AS jam_transaksi, b.`nm_user` FROM transaksi a LEFT JOIN users b ON a.`useradd` = b.`id_user` WHERE a.no_transaksi = '".$no_transaksi."'");
+	$htrans = mysqli_num_rows($strans);
 	if(empty($no_transaksi) || $htrans == 0){
 		echo"Tidak ada data untuk dicetak...";
 	}else{
-		$dtrans			= $strans->result_array();
+		$dtrans			= mysqli_fetch_array($strans);
 
-		include"global/phpqrcode/qrlib.php";
-		QRCode::png(base_url()."cekdok/kuitansi-transapotik/".enkrip($no_transaksi),"qrcode/kuitansi-transapotik-".$no_transaksi,"Q",4,2);
+		include"vendor/phpqrcode/qrlib.php";
+		QRCode::png(identitas("url")."cekdok.php?menu=kuitansi&id=".$no_transaksi,"qrcode/kuitansi-".$no_transaksi,"Q",4,2);
 		
-		
-		include'public/inc/pdf/kop1.php';
-		$header 		= $kopganteng;
+		$header 		= "";
 		$margin_top		= 20;
 		$margin_right	= 5;
 		$margin_left	= 5;					
@@ -107,7 +101,7 @@
 
 	
 	<div style="font-size:11px;text-align:right;padding:5px 0px;">
-		<b><?php echo tgl_indo($dtrans[0]['tgl_transaksi'],"a")." ".$dtrans[0]['jam_transaksi'];?></b>
+		<b><?php echo tgl_indo($dtrans['tgl_transaksi'],"a")." ".$dtrans['jam_transaksi'];?></b>
 	</div>
 	
 
@@ -126,71 +120,56 @@
 			</tr>
 			<?php
 				$nodata		= 1;
-				$total_obat	= 0;
-				$sdata		= $this->db->query("SELECT a.*, b.no_obat, b.nm_obat FROM trans_obat a LEFT JOIN obat b ON a.id_obat = b.id_obat WHERE a.no_transaksi = '".$no_transaksi."'");
-				foreach($sdata->result_array() as $ddata){
+				$sdata		= mysqli_query($con,"SELECT a.*, b.nm_barang FROM transaksi_detail a LEFT JOIN barang b ON a.kode_barang = b.kode_barang WHERE a.no_transaksi = '".$no_transaksi."'");
+				while($ddata = mysqli_fetch_array($sdata)){
 					echo"
 						<tr>
 							<td class='text-center'>".$nodata.".</td>
 							<td>
-								".$ddata['nm_obat']."
+								".$ddata['nm_barang']."
 							</td>
-							<td class='text-right'>".rupiah($ddata['harga_satuan']).",-</td>
+							<td class='text-right'>".rupiah($ddata['harga']).",-</td>
 							<td class='text-center'>".$ddata['qty']."</td>
-							<td class='text-right'>".rupiah($ddata['total_harga']).",-</td>
+							<td class='text-right'>".rupiah($ddata['total']).",-</td>
 						</tr>
 					";
-					$total_obat	= $total_obat + $ddata['total_harga'];
 					$nodata++;
 				}
 			?>
 			
 			<tr>
-				<td rowspan="5" colspan="2">
+				<td rowspan="3" colspan="2">
 					
 				</td>
-				<td class="text-right" style="">Total</td>
+				<td class="text-right" style="">Grand Total</td>
 				<td class="text-left" style="width:50px;">: Rp</td>
-				<td class="text-right" style="width:130px;"><?php echo rupiah($dtrans[0]['total_kotor']);?>,-</td>
-			</tr>
-			<tr>
-				<td class="text-right" style="border-top:0px;">Potongan</td>
-				<td class="text-left" style="width:50px;border-top:0px;">: Rp</td>
-				<td class="text-right" style="width:130px;border-top:0px;"><?php echo rupiah($dtrans[0]['potongan']);?>,-</td>
-			</tr>
-			<tr>
-				<td class="text-right" style="border-top:0px;"><b>Grand Total</b></td>
-				<td class="text-left" style="width:50px;border-top:0px;"><b>: Rp</b></td>
-				<td class="text-right text-danger" style="width:130px;border-top:0px;"><b><?php echo rupiah($dtrans[0]['total_bersih']);?>,-</b></td>
+				<td class="text-right" style="width:130px;font-weight:bold;"><?php echo rupiah($dtrans['grand']);?>,-</td>
 			</tr>
 			<tr>
 				<td class="text-right" style="border-top:0px;">Total Bayar</td>
 				<td class="text-left" style="width:50px;border-top:0px;">: Rp</td>
-				<td class="text-right" style="width:130px;border-top:0px;"><?php echo rupiah($dtrans[0]['cash']);?>,-</td>
+				<td class="text-right" style="width:130px;border-top:0px;"><?php echo rupiah($dtrans['bayar']);?>,-</td>
 			</tr>
 			<tr>
 				<td class="text-right" style="border-top:0px;">Kembali</td>
 				<td class="text-left" style="width:50px;border-top:0px;">: Rp</td>
-				<td class="text-right" style="width:130px;border-top:0px;"><?php echo rupiah($dtrans[0]['kembali']);?>,-</td>
+				<td class="text-right" style="width:130px;border-top:0px;"><?php echo rupiah($dtrans['kembali']);?>,-</td>
 			</tr>
 			<tr>
 				<td rowspan="1" style="border-top:0px;padding-left:0px;" colspan="5">
-					<div style="text-transform:capitalize;"><i>Terbilang: <?php echo penyebut($dtrans[0]['total_bersih']);?> rupiah</i></div>
+					<div style="text-transform:capitalize;"><i>Terbilang: <?php echo penyebut($dtrans['grand']);?> rupiah</i></div>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	
 	<div style="width:100%;border-top:2px solid #000;">
-<!--
-		<span style="float:left;font-size:12px;">Keterangan: <?php echo $dtrans[0]['keterangan'];?></span>
--->
 	<br>
 	</div>
 	
 	<table class="tabel_gendeng">
 		<tr>
-			<td rowspan="3" style="width:450px;"><img src="<?php echo base_url()."qrcode/kuitansi-transapotik-".$no_transaksi;?>" style="border:1px solid #000;width:100px;"></td>
+			<td rowspan="3" style="width:450px;"><img src="<?php echo identitas("url")."qrcode/kuitansi-".$no_transaksi;?>" style="border:1px solid #000;width:100px;"></td>
 			<td>Petugas,</td>
 		</tr>
 		<tr>
@@ -203,7 +182,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td><u><b><?php echo $dtrans[0]['nm_admin'];?></b></u></td>
+			<td><u><b><?php echo $dtrans['nm_user'];?></b></u></td>
 		</tr>
 	</table>
 						
